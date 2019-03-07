@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED COMPONENTS date_time)
+find_package(Boost REQUIRED COMPONENTS date_time system)
 add_executable(
     ${PROJECT_NAME}
     main.cpp
@@ -12,4 +12,6 @@ target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
     ${Boost_LIBRARIES}
+    rt
+    pthread
 )
