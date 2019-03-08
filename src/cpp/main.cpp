@@ -29,7 +29,7 @@ class server: public boost::enable_shared_from_this<server>
         if(error_code)
         {
             std::cerr << "Failed open acceptor. \n";
-            std::cerr << error_code << "\n";
+            std::cerr << error_code.message() << ' ' << error_code << '\n';
             return;
         }
 
@@ -38,7 +38,8 @@ class server: public boost::enable_shared_from_this<server>
         if(error_code)
         {
             // fail(error_code, "set_option");
-            std::cerr << error_code << "\n";
+            std::cerr << "Failed to set_option.\n";
+            std::cerr << error_code.message() << ' ' << error_code << '\n';
             return;
         }
 
@@ -47,7 +48,8 @@ class server: public boost::enable_shared_from_this<server>
         if(error_code)
         {
             // fail(error_code, "bind");
-            std::cerr << error_code << "\n";
+            std::cerr << "Failed to bind endpoint.\n";
+            std::cerr << error_code.message() << ' ' << error_code << '\n';
             return;
         }
 
@@ -57,7 +59,8 @@ class server: public boost::enable_shared_from_this<server>
         if(error_code)
         {
             // fail(error_code, "listen");
-            std::cerr << error_code << "\n";
+            std::cerr << "Failed to listen.\n";
+            std::cerr << error_code.message() << ' ' << error_code << '\n';
             return;
         }
 
@@ -75,9 +78,8 @@ class server: public boost::enable_shared_from_this<server>
     {
       if(error_code)
       {
-        std::cerr << error_code << '\n';
-        std::cerr << error_code.message() << '\n';
-        std::cerr << error_code.value() << '\n';
+        std::cerr << "Failed to accepted.\n";
+        std::cerr << error_code.message() << ' ' << error_code << '\n';
       }
       else
       {
@@ -108,7 +110,8 @@ class server: public boost::enable_shared_from_this<server>
       {
         if(error_code)
         {
-          std::cerr << error_code << '\n';
+          std::cerr << "Failed to accepted in session. \n";
+          std::cerr << error_code.message() << ' ' << error_code << '\n';
           return;
         }
         this->websocket.async_read(this->multi_buffer, 
@@ -131,7 +134,6 @@ class server: public boost::enable_shared_from_this<server>
 
 
 int main(int argc, char **argv) {
-  std::cout << "Hello world!\n";
   boost::asio::io_context io_context;
   boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::make_address("0.0.0.0"), 8080);
   boost::make_shared<server>(io_context, endpoint)->run();
