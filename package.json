@@ -9,6 +9,6 @@
   "author": "wuzhuobin",
   "license": "ISC",
   "dependencies": {
-    "socket.io": "^2.2.0"
+    "ws": "^6.2.0"
   }
 }

@@ -118,8 +118,18 @@ class server: public boost::enable_shared_from_this<server>
           boost::asio::bind_executor(this->strand, boost::bind(&session::readen, this->shared_from_this(), _1, _2)));
       }
 
-      void readen(boost::system::error_code, std::size_t bytes_transferred)
+      void readen(boost::system::error_code error_code, std::size_t bytes_transferred)
       {
+        if(error_code)
+        {
+          std::cerr << "Failed to read in session.\n";
+          std::cerr << error_code.message() << ' ' << error_code << '\n';
+          return;
+        }
+        for(auto buffer = this->multi_buffer.data().begin(); buffer != this->multi_buffer.data().end(); ++buffer)
+        {
+          std::cout << static_cast<const char*>((*buffer).data());
+        }
         // boost::ignore_unused(bytes_transferred);
         // (void)(bytes_transferred);
         std::cerr << "bytes: " << bytes_transferred << '\n';
