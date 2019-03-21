@@ -15,7 +15,7 @@
  * @date         Mar.07.2019
  * 
  */
-class server: public boost::enable_shared_from_this<server>
+class server 
 {
   public: 
     server(boost::asio::io_context &io_context, boost::asio::ip::tcp::endpoint endpoint):
@@ -65,13 +65,11 @@ class server: public boost::enable_shared_from_this<server>
         }
 
         // Start accepting incoming connection.
-        // this->acceptor.async_accept(this->socket, 
-        //   boost::bind(&server::accepted, this->shared_from_this(), _1));
+        this->acceptor.async_accept(this->socket, 
+          boost::bind(&server::accepted, this, _1));
     }
     void run()
     {
-        this->acceptor.async_accept(this->socket, 
-          boost::bind(&server::accepted, this->shared_from_this(), _1));
     }
   private:
     void accepted(boost::system::error_code error_code)
@@ -86,7 +84,7 @@ class server: public boost::enable_shared_from_this<server>
         boost::make_shared<session>(boost::move(this->socket))->run();
       }
       this->acceptor.async_accept(this->socket,
-        boost::bind(&server::accepted, this->shared_from_this(), _1));      
+        boost::bind(&server::accepted, this, _1));      
     }
     boost::asio::ip::tcp::acceptor acceptor;
     boost::asio::ip::tcp::socket socket;
@@ -143,11 +141,19 @@ class server: public boost::enable_shared_from_this<server>
 
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) try {
+  if(argc != 2)
+  {
+    std::cerr << "WebSocketServer <port>\n";
+    return EXIT_FAILURE;
+  }
   boost::asio::io_context io_context;
-  boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::make_address("0.0.0.0"), 8080);
+  boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::make_address("0.0.0.0"), atoi(argv[1]));
   boost::make_shared<server>(io_context, endpoint)->run();
   io_context.run();
-
   return EXIT_SUCCESS;
+}
+catch(std::exception &e)
+{
+  std::cerr << "Exception: " << e.what() << '\n';
 }

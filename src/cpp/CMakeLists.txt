@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED COMPONENTS date_time system)
+find_package(Boost REQUIRED COMPONENTS date_time system regex)
 add_executable(
     ${PROJECT_NAME}
     main.cpp
@@ -8,10 +8,12 @@ target_include_directories(
     PRIVATE
     ${Boost_INCLUDE_DIRS}
 )
+if(UNIX)
+  set(OTHER_LIBRARY rt pthread)
+endif()
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
     ${Boost_LIBRARIES}
-    rt
-    pthread
+    ${OTHER_LIBRARY}
 )
